@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "algeriago-web",
-      "runtimeExecutable": "C:/Program Files/nodejs/node.exe",
-      "runtimeArgs": ["C:/Program Files/nodejs/node_modules/npm/bin/npx-cli.js", "expo", "start", "--web", "--port", "8081"],
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["node_modules/expo/bin/cli", "start", "--web", "--port", "8081"],
       "port": 8081
     }
   ]

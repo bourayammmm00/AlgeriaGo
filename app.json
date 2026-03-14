@@ -14,11 +14,22 @@
     },
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.algeriago.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "LSApplicationQueriesSchemes": [
+          "comgooglemaps",
+          "maps"
+        ],
+        "NSLocationWhenInUseUsageDescription": "AlgeriaGo a besoin de votre localisation pour vous montrer les lieux à proximité."
+      },
       "config": {
         "googleMapsApiKey": "YOUR_GOOGLE_MAPS_API_KEY"
       }
     },
     "android": {
+      "package": "com.algeriago.app",
+      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#1B5E3B",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -32,7 +43,22 @@
       },
       "permissions": [
         "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION"
+        "ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "geo"
+            }
+          ],
+          "category": [
+            "DEFAULT"
+          ]
+        }
       ]
     },
     "web": {
@@ -49,6 +75,13 @@
           "locationAlwaysAndWhenInUsePermission": "AlgeriaGo a besoin de votre localisation pour vous montrer les lieux à proximité."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "3cbf5140-43b2-4cc9-9d55-1e2f3e065cdb"
+      }
+    },
+    "owner": "mirko05"
   }
 }

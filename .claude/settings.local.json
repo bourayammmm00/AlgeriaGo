@@ -9,7 +9,16 @@
       "Bash(export PATH=\"/c/Program Files/nodejs:$PATH\")",
       "Bash(npm --version)",
       "Read(//c/Users/boura/OneDrive/Bureau/**)",
-      "Bash(npx create-expo-app@latest AlgeriaGo --template blank-typescript)"
+      "Bash(npx create-expo-app@latest AlgeriaGo --template blank-typescript)",
+      "Bash(powershell.exe -Command \"Get-Command gh -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source\")",
+      "Bash(powershell.exe -Command \"winget install GitHub.cli --accept-source-agreements --accept-package-agreements\")",
+      "Bash(export PATH=\"/c/Program Files/GitHub CLI:$PATH\")",
+      "Bash(gh auth:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(node -e \"const p = require\\(''./node_modules/react-native-web/package.json''\\); console.log\\(p.version\\)\")",
+      "Bash(where eas:*)",
+      "Bash(npm list:*)",
+      "Bash(npm root:*)"
     ]
   }
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity, Dimensions, Alert } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity, Dimensions, Alert, Linking, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Sharing from 'expo-sharing';
@@ -64,6 +64,32 @@ export default function PlaceDetailScreen() {
         { text: 'Annuler', style: 'cancel' },
       ]
     );
+  };
+
+  const openInGoogleMaps = () => {
+    if (!place) return;
+    const { latitude, longitude, name, address } = place;
+    const label = encodeURIComponent(name);
+    const query = encodeURIComponent(address || name);
+
+    // Try Google Maps app first, fallback to web
+    const googleMapsUrl = Platform.select({
+      ios: `comgooglemaps://?q=${query}&center=${latitude},${longitude}`,
+      android: `geo:${latitude},${longitude}?q=${query}`,
+      default: `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}&query_place_id=${label}`,
+    });
+
+    const webFallback = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+
+    Linking.canOpenURL(googleMapsUrl).then((supported) => {
+      if (supported) {
+        Linking.openURL(googleMapsUrl);
+      } else {
+        Linking.openURL(webFallback);
+      }
+    }).catch(() => {
+      Linking.openURL(webFallback);
+    });
   };
 
   const handleShare = async () => {
@@ -144,13 +170,14 @@ export default function PlaceDetailScreen() {
         {/* Info Cards */}
         <View style={styles.infoCards}>
           {place.address && (
-            <View style={styles.infoCard}>
+            <TouchableOpacity style={styles.infoCard} onPress={openInGoogleMaps} activeOpacity={0.7}>
               <Ionicons name="location-outline" size={20} color={Colors.primary} />
-              <View style={styles.infoContent}>
+              <View style={[styles.infoContent, { flex: 1 }]}>
                 <Text style={styles.infoLabel}>Adresse</Text>
-                <Text style={styles.infoValue}>{place.address}</Text>
+                <Text style={[styles.infoValue, { color: Colors.primary }]}>{place.address}</Text>
               </View>
-            </View>
+              <Ionicons name="navigate-outline" size={18} color={Colors.primary} />
+            </TouchableOpacity>
           )}
           {place.openingHours && (
             <View style={styles.infoCard}>
@@ -181,11 +208,18 @@ export default function PlaceDetailScreen() {
           )}
         </View>
 
-        {/* Add to trip button */}
-        <TouchableOpacity style={styles.addToTripBtn} onPress={handleAddToTrip}>
-          <Ionicons name="add-circle" size={22} color={Colors.white} />
-          <Text style={styles.addToTripText}>Ajouter à mon voyage</Text>
-        </TouchableOpacity>
+        {/* Action buttons */}
+        <View style={styles.actionRow}>
+          <TouchableOpacity style={styles.addToTripBtn} onPress={handleAddToTrip}>
+            <Ionicons name="add-circle" size={22} color={Colors.white} />
+            <Text style={styles.addToTripText}>Ajouter à mon voyage</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.googleMapsBtn} onPress={openInGoogleMaps}>
+            <Ionicons name="navigate" size={20} color={Colors.white} />
+            <Text style={styles.googleMapsText}>Voir sur Google Maps</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Reviews */}
         <ReviewSection placeId={place.id} />
@@ -331,17 +365,34 @@ const styles = StyleSheet.create({
     color: Colors.text,
     marginTop: 2,
   },
+  actionRow: {
+    paddingHorizontal: 16,
+    marginTop: 20,
+    gap: 10,
+  },
   addToTripBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.primary,
-    marginHorizontal: 16,
-    marginTop: 20,
     paddingVertical: 14,
     borderRadius: 12,
   },
   addToTripText: {
+    color: Colors.white,
+    fontWeight: '700',
+    fontSize: 16,
+    marginLeft: 8,
+  },
+  googleMapsBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#4285F4',
+    paddingVertical: 14,
+    borderRadius: 12,
+  },
+  googleMapsText: {
     color: Colors.white,
     fontWeight: '700',
     fontSize: 16,
