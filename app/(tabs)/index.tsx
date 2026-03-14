@@ -7,7 +7,7 @@ import { Colors } from '../../src/constants/colors';
 import SearchBar from '../../src/components/SearchBar';
 import PlaceCard from '../../src/components/PlaceCard';
 import StarRating from '../../src/components/StarRating';
-import { places, cities, getNearbyPlaces, searchPlaces } from '../../src/data/places';
+import { places, cities, getNearbyPlaces, searchPlaces, refreshCustomPlaces, getAllPlaces } from '../../src/data/places';
 import { Place, City } from '../../src/types';
 
 export default function HomeScreen() {
@@ -19,7 +19,7 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadNearbyPlaces();
+    refreshCustomPlaces().then(() => loadNearbyPlaces());
   }, []);
 
   useEffect(() => {
@@ -47,8 +47,9 @@ export default function HomeScreen() {
       setRestaurants(nearby.filter(p => p.category === 'restaurant').slice(0, 10));
     } catch {
       // Fallback to all places
-      setNearbyPlaces(places.filter(p => p.category !== 'restaurant').slice(0, 10));
-      setRestaurants(places.filter(p => p.category === 'restaurant').slice(0, 10));
+      const all = getAllPlaces();
+      setNearbyPlaces(all.filter(p => p.category !== 'restaurant').slice(0, 10));
+      setRestaurants(all.filter(p => p.category === 'restaurant').slice(0, 10));
     }
     setLoading(false);
   };

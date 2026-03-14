@@ -1,11 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../src/constants/colors';
 import SearchBar from '../../src/components/SearchBar';
 import PlaceCard from '../../src/components/PlaceCard';
-import { places, cities, searchPlaces, getPlacesByCategory } from '../../src/data/places';
+import { places, cities, searchPlaces, getPlacesByCategory, refreshCustomPlaces, getAllPlaces } from '../../src/data/places';
 import { PlaceCategory } from '../../src/types';
 
 const categories: { key: PlaceCategory | 'all'; label: string; icon: string }[] = [
@@ -24,9 +24,14 @@ export default function ExplorerScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<PlaceCategory | 'all'>('all');
   const [viewMode, setViewMode] = useState<'cities' | 'places'>('cities');
+  const [allPlaces, setAllPlaces] = useState(getAllPlaces());
+
+  useEffect(() => {
+    refreshCustomPlaces().then(() => setAllPlaces(getAllPlaces()));
+  }, []);
 
   const filteredPlaces = useMemo(() => {
-    let results = searchQuery.length > 1 ? searchPlaces(searchQuery) : places;
+    let results = searchQuery.length > 1 ? searchPlaces(searchQuery) : allPlaces;
     if (selectedCategory !== 'all') {
       results = results.filter(p => p.category === selectedCategory);
     }

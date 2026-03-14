@@ -1,8 +1,20 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
+import { TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../src/constants/colors';
 
 export default function TabLayout() {
+  const router = useRouter();
+
+  const AdminButton = () => (
+    <TouchableOpacity
+      onPress={() => router.push('/admin')}
+      style={{ marginRight: 16 }}
+    >
+      <Ionicons name="settings-outline" size={22} color={Colors.white} />
+    </TouchableOpacity>
+  );
+
   return (
     <Tabs
       screenOptions={{
@@ -37,6 +49,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
           ),
+          headerRight: () => <AdminButton />,
         }}
       />
       <Tabs.Screen

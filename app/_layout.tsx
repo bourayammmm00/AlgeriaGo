@@ -34,6 +34,18 @@ export default function RootLayout() {
           name="share"
           options={{ title: 'Partager Votre Trajet' }}
         />
+        <Stack.Screen
+          name="admin/index"
+          options={{ title: 'Admin - Gérer les lieux' }}
+        />
+        <Stack.Screen
+          name="admin/add"
+          options={{ title: 'Ajouter un lieu' }}
+        />
+        <Stack.Screen
+          name="admin/settings"
+          options={{ title: 'Paramètres Admin' }}
+        />
       </Stack>
     </>
   );

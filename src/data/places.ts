@@ -1,4 +1,5 @@
 import { Place, City } from '../types';
+import { getCustomPlaces } from '../stores/adminStore';
 
 export const cities: City[] = [
   {
@@ -568,16 +569,27 @@ export const places: Place[] = [
   },
 ];
 
+// Cache for custom places (refreshed on each async call)
+let _customPlacesCache: Place[] = [];
+
+export async function refreshCustomPlaces(): Promise<void> {
+  _customPlacesCache = await getCustomPlaces();
+}
+
+export function getAllPlaces(): Place[] {
+  return [...places, ..._customPlacesCache];
+}
+
 export function getPlacesByCity(cityName: string): Place[] {
-  return places.filter(p => p.city.toLowerCase() === cityName.toLowerCase());
+  return getAllPlaces().filter(p => p.city.toLowerCase() === cityName.toLowerCase());
 }
 
 export function getPlacesByCategory(category: string): Place[] {
-  return places.filter(p => p.category === category);
+  return getAllPlaces().filter(p => p.category === category);
 }
 
 export function getNearbyPlaces(lat: number, lng: number, radiusKm: number = 50): Place[] {
-  return places.filter(p => {
+  return getAllPlaces().filter(p => {
     const dist = getDistance(lat, lng, p.latitude, p.longitude);
     return dist <= radiusKm;
   }).sort((a, b) => {
@@ -589,7 +601,7 @@ export function getNearbyPlaces(lat: number, lng: number, radiusKm: number = 50)
 
 export function searchPlaces(query: string): Place[] {
   const q = query.toLowerCase();
-  return places.filter(p =>
+  return getAllPlaces().filter(p =>
     p.name.toLowerCase().includes(q) ||
     p.city.toLowerCase().includes(q) ||
     p.wilaya.toLowerCase().includes(q) ||
@@ -610,7 +622,7 @@ function getDistance(lat1: number, lon1: number, lat2: number, lon2: number): nu
 }
 
 export function getPlaceById(id: string): Place | undefined {
-  return places.find(p => p.id === id);
+  return getAllPlaces().find(p => p.id === id);
 }
 
 export function getCityByName(name: string): City | undefined {
